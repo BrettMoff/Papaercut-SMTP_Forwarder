@@ -53,7 +53,7 @@ Function SendMessage($SMTPserver, $Port, $MailFrom, $RecipientTo, $Email) {
 		SendCommand $stream $writer ("MAIL FROM: <" + $MailFrom + ">")
 		SendCommand $stream $writer ("RCPT TO: <" + $RecipientTo + ">")
 		SendCommand $stream $writer "DATA"
-		$content = (Get-Content $($Email.FullName)) -join "`r`n"
+		$content = (Get-Content -LiteralPath $($Email.FullName)) -join "`r`n"
 		SendCommand $stream $writer ($content + $endOfMessage)
 		SendCommand $stream $writer "QUIT"
 	}
@@ -77,7 +77,7 @@ $Emails = Get-ChildItem $EmailDirectory -Filter "*.eml"
 foreach ($Email in $Emails) {
     SendMessage $SMTPserver $Port $MailFrom $RecipientTo $Email | Out-Null
     if ($KeepBackup -eq $true) {
-        Move-Item -Path $($Email.FullName) -Destination  "$EmailDirectory\Processed"
+        Move-Item -LiteralPath $($Email.FullName) -Destination "$EmailDirectory\Processed"
     } else {
         $Email | Remove-Item
     }
